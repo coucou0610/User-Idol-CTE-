@@ -18,9 +18,8 @@
     // RPG 数据状态
     window.CTEIdolManager.RPG = {
         state: {
-            funds: 2450000,
-            fans: 824000,
-            morale: "High",
+            funds: -2000000,
+            fans: 4500,
             futureLog: [],
             activeTasks: [] 
         }
@@ -1210,11 +1209,9 @@
         if (window.CTEIdolManager.RPG && window.CTEIdolManager.RPG.state) {
             const fundsEl = document.querySelector('#cte-idol-map-panel #cte-idol-rpg-val-funds');
             const fansEl = document.querySelector('#cte-idol-map-panel #cte-idol-rpg-val-fans');
-            const moraleEl = document.querySelector('#cte-idol-map-panel #cte-idol-rpg-val-morale');
 
             if (fundsEl) fundsEl.innerText = window.CTEIdolManager.RPG.state.funds.toLocaleString();
             if (fansEl) fansEl.innerText = window.CTEIdolManager.RPG.state.fans.toLocaleString();
-            if (moraleEl) moraleEl.innerText = window.CTEIdolManager.RPG.state.morale;
         }
     };
 
@@ -1298,7 +1295,6 @@
                         const fansStr = String(cteGroup['粉丝']).replace(/,/g, '');
                         window.CTEIdolManager.RPG.state.fans = parseInt(fansStr, 10) || 0;
                     }
-                    if (cteGroup['团魂']) window.CTEIdolManager.RPG.state.morale = cteGroup['团魂'];
                     if (cteGroup['待办']) window.CTEIdolManager.RPG.state.futureLog = Array.isArray(cteGroup['待办']) ? cteGroup['待办'] : [cteGroup['待办']];
                     if (cteGroup['现有通告']) window.CTEIdolManager.RPG.state.activeTasks = Array.isArray(cteGroup['现有通告']) ? cteGroup['现有通告'] : [cteGroup['现有通告']];
                 }
