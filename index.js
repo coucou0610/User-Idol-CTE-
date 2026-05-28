@@ -1884,58 +1884,6 @@
         `);
     };
 
-    window.CTEIdolManager.closeTravelMenu = function(shouldReset = true) {
-        $('#cte-idol-travel-menu-overlay').hide();
-        if (shouldReset && window.CTEIdolManager.isSelectingForSchedule) {
-            window.CTEIdolManager.isSelectingForSchedule = false;
-            window.CTEIdolManager.tempScheduleParticipants = [];
-        }
-    };
-
-    window.CTEIdolManager.goToCustomDestination = function() {
-        const val = $('#cte-idol-custom-destination-input').val();
-        if (val) {
-            window.CTEIdolManager.closeAllPopups();
-            window.CTEIdolManager.openTravelMenu(val);
-        } else {
-            alert('请输入地点名称');
-        }
-    };
-
-    window.CTEIdolManager.confirmTravel = function(isAlone) {
-        const dest = window.CTEIdolManager.currentDestination;
-        let npcText = '';
-        const npcInput = document.getElementById('cte-idol-npc-input');
-        if (npcInput && window.CTEIdolManager.tempNPCState.enabled) {
-             const val = npcInput.value.trim();
-             if (val) npcText = `，遇见了${val}`;
-        }
-        if (isAlone) {
-            let text = `{{user}} 决定独自前往${dest}${npcText}。`;
-            if (stContext) {
-                stContext.executeSlashCommandsWithOptions(`/setinput ${text}`);
-                window.CTEIdolManager.closeAllPopups();
-            }
-        }
-    };
-
-    window.CTEIdolManager.finalizeTravel = function(activity) {
-        const dest = window.CTEIdolManager.currentDestination;
-        let finalActivity = activity;
-        if (!finalActivity) finalActivity = $('#cte-idol-custom-activity').val();
-        if (!finalActivity) return alert("请选择或输入活动内容");
-
-        const name = window.CTEIdolManager.currentCompanion;
-        let npcText = '';
-        if (window.CTEIdolManager.tempNPCState.enabled && window.CTEIdolManager.tempNPCState.content) {
-            npcText = `，期间遇见了${window.CTEIdolManager.tempNPCState.content}`;
-        }
-        const text = `{{user}} 邀请 ${name} 一起前往${dest}，${finalActivity}${npcText}。`;
-        if (stContext) {
-            stContext.executeSlashCommandsWithOptions(`/setinput ${text}`);
-            window.CTEIdolManager.closeAllPopups();
-        }
-    };
 
 
     window.CTEIdolManager.openTravelMenu = function(destination) {
