@@ -1484,7 +1484,7 @@
                 window.CTEIdolManager.scanForRPGStats();
                 window.CTEIdolManager.readStatsFromMVU();
                 window.CTEIdolManager.readCharacterStatsFromChat();
-                window.CTEIdolManager.renderRPGContent('dashboard'); 
+                window.CTEIdolManager.renderRPGContent('agency'); 
             }
         } catch (e) {
             console.error("[CTE Idol Map] Error switching view:", e);
@@ -1623,7 +1623,7 @@
                     if ($('#cte-idol-view-manager').hasClass('active')) {
                         window.CTEIdolManager.readStatsFromMVU();
                         window.CTEIdolManager.readCharacterStatsFromChat();
-                        window.CTEIdolManager.renderRPGContent('dashboard');
+                        window.CTEIdolManager.renderRPGContent('agency');
                     }
                 });
             }
