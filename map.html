@@ -2182,7 +2182,6 @@
     };
 
     window.CTEIdolManager.showPopup = function(id) {
-        if (id === 'cte-idol-dorm-detail-popup') window.CTEIdolManager.closeAllPopups();
         const popup = document.querySelector(`#cte-idol-map-panel #${id}`);
         const overlay = document.querySelector(`#cte-idol-map-panel #cte-idol-overlay`);
         if (popup) {
