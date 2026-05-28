@@ -1286,6 +1286,9 @@
         let htmlContent = '';
 
         try {
+            if (viewType === 'agency') {
+                window.CTEIdolManager.Contracts.renderView(container);
+            } else if (viewType === 'shop') {
                 window.CTEIdolManager.Shop.renderView(container);
             } else if (viewType === 'news') {
                 // [NEW] Render News View
@@ -1427,13 +1430,15 @@
         }
 
         try {
-            }
             if (viewName === 'manager') {
                 window.CTEIdolManager.scanForRPGStats();
                 window.CTEIdolManager.readStatsFromMVU();
                 window.CTEIdolManager.readCharacterStatsFromChat();
                 window.CTEIdolManager.renderRPGContent('dashboard'); 
             }
+        } catch (e) {
+            console.error("[CTE Idol Map] Error switching view:", e);
+        }
     };
 
     // ==========================================
@@ -1569,7 +1574,6 @@
                         window.CTEIdolManager.readStatsFromMVU();
                         window.CTEIdolManager.readCharacterStatsFromChat();
                         window.CTEIdolManager.renderRPGContent('dashboard');
-                    }
                     }
                 });
             }
@@ -2198,8 +2202,6 @@
         $('#cte-idol-map-panel #cte-idol-overlay').hide();
         $('#cte-idol-map-panel .cte-idol-popup').hide();
         window.CTEIdolManager.closeSubMenu();
-        // [FIX] Update close logic to new consolidated object methods
-        }
         window.CTEIdolManager.Contracts.closeModal();
         window.CTEIdolManager.Shop.closeModal();
         window.CTEIdolManager.closeTravelMenu(isTravelMenuVisible);
