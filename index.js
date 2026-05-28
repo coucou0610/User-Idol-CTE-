@@ -998,7 +998,6 @@
             }
 
             this.closeModal();
-            // Optional: Switch back to dashboard or update visual state handled by AI response
         }
     };
 
@@ -1748,76 +1747,6 @@
         $('#cte-idol-national-game-map').css('background-image', `url(${bg})`);
     };
 
-    window.CTEIdolManager.refreshSchedule = async function() {
-        const statusEl = $('#cte-idol-schedule-status');
-        const container = $('#cte-idol-timeline-container');
-        statusEl.text('正在读取最新状态...');
-        
-        const foundContent = window.CTEIdolManager.getStatusTopContent();
-
-        if (!foundContent) {
-            statusEl.text('未找到最新行程信息');
-            container.html('<p style="text-align:center; color:#666; margin-top:50px;">在聊天记录中未找到 &lt;status_top&gt; 标签。</p>');
-            return;
-        }
-
-        const targetKeyword = "今日安排";
-        const keywordIndex = foundContent.indexOf(targetKeyword);
-        if (keywordIndex === -1) {
-             statusEl.text(`未找到“${targetKeyword}”`);
-             container.html(`<p style="text-align:center; color:#666; margin-top:50px;">在 &lt;status_top&gt; 信息中未找到“${targetKeyword}”关键词。</p>`);
-             return;
-        }
-
-        let scheduleContent = foundContent.substring(keywordIndex + targetKeyword.length);
-        scheduleContent = scheduleContent.replace(/^[:：\s]+/, '').trim();
-        statusEl.text('行程安排 (已同步)');
-        const items = window.CTEIdolManager.parseSchedule(scheduleContent);
-        window.CTEIdolManager.renderSchedule(items);
-    };
-
-    window.CTEIdolManager.parseSchedule = function(text) {
-        const lines = text.split('\n').filter(line => line.trim() !== '');
-        const items = [];
-        lines.forEach(line => {
-            let time = '';
-            let content = line;
-            const timeMatch = line.match(/^\[?(\d{1,2}:\d{2})\]?\s*[-:：]?\s*(.*)/);
-            if (timeMatch) {
-                time = timeMatch[1];
-                content = timeMatch[2];
-            } else {
-                time = '待定';
-            }
-            items.push({ time, content, raw: line });
-        });
-        return items;
-    };
-
-    window.CTEIdolManager.renderSchedule = function(items) {
-        const container = $('#cte-idol-timeline-container');
-        container.empty();
-        if (items.length === 0) {
-            container.html('<p style="text-align:center; color:#666;">行程单为空。</p>');
-            return;
-        }
-        items.forEach(item => {
-            let displayContent = item.content;
-            let tagsHtml = '';
-            const tagMatch = displayContent.match(/[\(\[\（](.*?)[\)\]\）]/);
-            if (tagMatch) tagsHtml = `<span class="cte-idol-tag">${tagMatch[1]}</span>`;
-
-            const html = `
-                <div class="cte-idol-timeline-item">
-                    <div class="cte-idol-timeline-time">${item.time}</div>
-                    <div class="cte-idol-timeline-content">
-                        <div class="cte-idol-schedule-title"><span>${displayContent}</span>${tagsHtml}</div>
-                        <button class="cte-idol-exec-btn" onclick="window.CTEIdolManager.openParticipantSelection('${item.raw.replace(/'/g, "\\'").replace(/"/g, "&quot;")}')">⚡ 执行行程</button>
-                    </div>
-                </div>`;
-            container.append(html);
-        });
-    };
 
     window.CTEIdolManager.openParticipantSelection = function(itemText) {
         window.CTEIdolManager.isSelectingForSchedule = false; 
