@@ -25,6 +25,8 @@
         }
     };
 
+    window.CTEIdolManager.availableParticipants = ['{{user}}', '秦述', '司洛', '鹿言', '魏星泽', '周锦宁', '谌绪', '孟明赫', '亓谢', '魏月华', '桑洛凡'];
+
     window.CTEIdolManager.nationalCities = [
         { id: 'jinggang', name: '京港', icon: 'fa-landmark-dome', top: '20%', left: '70%', isReturn: true, info: '<strong><i class="fa-solid fa-crown"></i> 首都:</strong> 首都，政治经济文化中心，权贵聚集，国际化大都市，夜生活极度繁华。' },
         { id: 'langjing', name: '琅京', icon: 'fa-gem', top: '40%', left: '80%', info: '<strong><i class="fa-solid fa-coins"></i> 豪门金库:</strong> 全国第二大城市，金融与地产重镇，豪门世家聚集。' },
@@ -1806,6 +1808,136 @@
         window.CTEIdolManager.switchView('map');
     };
 
+
+    window.CTEIdolManager.finalizeScheduleExecution = function() {
+        const participants = window.CTEIdolManager.tempScheduleParticipants.join(', ');
+        const destination = window.CTEIdolManager.currentDestination;
+        const scheduleItem = window.CTEIdolManager.currentScheduleItem;
+        let npcText = '';
+        const npcInput = document.getElementById('cte-idol-npc-input');
+        if (npcInput && npcInput.style.display !== 'none') {
+             const val = npcInput.value.trim();
+             if (val) npcText = `，遇见了${val}`;
+        }
+        const text = `${participants} 前往${destination}执行行程：${scheduleItem}${npcText}。`;
+        if (stContext) {
+            stContext.executeSlashCommandsWithOptions(`/setinput ${text}`);
+            window.CTEIdolManager.closeAllPopups();
+            window.CTEIdolManager.isSelectingForSchedule = false;
+            window.CTEIdolManager.tempScheduleParticipants = [];
+        } else {
+            alert("无法连接到 SillyTavern。");
+        }
+    };
+
+    window.CTEIdolManager.toggleNPC = function(enable, defaultText) {
+        const input = document.getElementById('cte-idol-npc-input');
+        const btnYes = document.getElementById('cte-idol-btn-npc-yes');
+        const btnNo = document.getElementById('cte-idol-btn-npc-no');
+        window.CTEIdolManager.tempNPCState.enabled = enable;
+        if (enable) {
+            input.style.display = 'block';
+            if (defaultText && !input.value) input.value = defaultText;
+            btnYes.style.background = '#b38b59'; btnYes.style.color = '#1a1a1a'; btnYes.style.borderColor = '#b38b59';
+            btnNo.style.background = 'transparent'; btnNo.style.color = '#e0c5a1'; btnNo.style.borderColor = '#666';
+        } else {
+            input.style.display = 'none';
+            btnNo.style.background = '#b38b59'; btnNo.style.color = '#1a1a1a'; btnNo.style.borderColor = '#b38b59';
+            btnYes.style.background = 'transparent'; btnYes.style.color = '#e0c5a1'; btnYes.style.borderColor = '#666';
+        }
+    };
+
+    window.CTEIdolManager.prepareCompanionInput = function() {
+        const npcInput = document.getElementById('cte-idol-npc-input');
+        if (npcInput && window.CTEIdolManager.tempNPCState.enabled) window.CTEIdolManager.tempNPCState.content = npcInput.value.trim();
+        window.CTEIdolManager.showCompanionInput();
+    }
+
+    window.CTEIdolManager.showCompanionInput = function() {
+        $('#cte-idol-travel-menu-overlay .cte-idol-travel-options').html(`
+            <p style="color: #888; margin: 0 0 10px 0;">和谁一起去？</p>
+            <input type="text" id="cte-idol-companion-name" class="cte-idol-travel-input" placeholder="输入角色姓名">
+            <button class="cte-idol-btn" onclick="window.CTEIdolManager.validateAndShowActivities()">🤝 一起前往</button>
+            <button class="cte-idol-btn" style="margin-top: 10px; border-color: #666; color: #888;" onclick="window.CTEIdolManager.openTravelMenu('${window.CTEIdolManager.currentDestination}')">返回</button>
+        `);
+    };
+
+    window.CTEIdolManager.validateAndShowActivities = function() {
+        const name = $('#cte-idol-companion-name').val();
+        if (!name) return alert("请输入姓名");
+        window.CTEIdolManager.currentCompanion = name;
+        window.CTEIdolManager.showActivityMenu();
+    };
+
+    window.CTEIdolManager.showActivityMenu = function() {
+        const activities = ['训练', '开会', '购物', '闲逛', '吃饭', '喝酒', '约会', '做爱', '运动', '直播', '拍摄节目', '接受媒体采访'];
+        let buttonsHtml = activities.map(act => `<button class="cte-idol-btn" style="margin: 3px; min-width: 60px; font-size: 13px;" onclick="window.CTEIdolManager.finalizeTravel('${act}')">${act}</button>`).join('');
+
+        $('#cte-idol-travel-menu-overlay .cte-idol-travel-options').html(`
+            <p style="color: #e0c5a1; margin: 0 0 10px 0;">去做什么？</p>
+            <div style="display:flex; flex-wrap:wrap; justify-content:center; gap:4px; margin-bottom:15px; max-height: 200px; overflow-y: auto;">${buttonsHtml}</div>
+            <div style="border-top: 1px solid #444; padding-top: 10px; width: 100%;">
+                <input type="text" id="cte-idol-custom-activity" class="cte-idol-travel-input" placeholder="自定义活动..." style="margin-bottom: 8px;">
+                <button class="cte-idol-btn" onclick="window.CTEIdolManager.finalizeTravel(null)">🚀 确认出发</button>
+            </div>
+            <button class="cte-idol-btn" style="margin-top: 10px; border-color: #666; color: #888; font-size: 12px; padding: 4px 10px;" onclick="window.CTEIdolManager.showCompanionInput()">返回上一步</button>
+        `);
+    };
+
+    window.CTEIdolManager.closeTravelMenu = function(shouldReset = true) {
+        $('#cte-idol-travel-menu-overlay').hide();
+        if (shouldReset && window.CTEIdolManager.isSelectingForSchedule) {
+            window.CTEIdolManager.isSelectingForSchedule = false;
+            window.CTEIdolManager.tempScheduleParticipants = [];
+        }
+    };
+
+    window.CTEIdolManager.goToCustomDestination = function() {
+        const val = $('#cte-idol-custom-destination-input').val();
+        if (val) {
+            window.CTEIdolManager.closeAllPopups();
+            window.CTEIdolManager.openTravelMenu(val);
+        } else {
+            alert('请输入地点名称');
+        }
+    };
+
+    window.CTEIdolManager.confirmTravel = function(isAlone) {
+        const dest = window.CTEIdolManager.currentDestination;
+        let npcText = '';
+        const npcInput = document.getElementById('cte-idol-npc-input');
+        if (npcInput && window.CTEIdolManager.tempNPCState.enabled) {
+             const val = npcInput.value.trim();
+             if (val) npcText = `，遇见了${val}`;
+        }
+        if (isAlone) {
+            let text = `{{user}} 决定独自前往${dest}${npcText}。`;
+            if (stContext) {
+                stContext.executeSlashCommandsWithOptions(`/setinput ${text}`);
+                window.CTEIdolManager.closeAllPopups();
+            }
+        }
+    };
+
+    window.CTEIdolManager.finalizeTravel = function(activity) {
+        const dest = window.CTEIdolManager.currentDestination;
+        let finalActivity = activity;
+        if (!finalActivity) finalActivity = $('#cte-idol-custom-activity').val();
+        if (!finalActivity) return alert("请选择或输入活动内容");
+
+        const name = window.CTEIdolManager.currentCompanion;
+        let npcText = '';
+        if (window.CTEIdolManager.tempNPCState.enabled && window.CTEIdolManager.tempNPCState.content) {
+            npcText = `，期间遇见了${window.CTEIdolManager.tempNPCState.content}`;
+        }
+        const text = `{{user}} 邀请 ${name} 一起前往${dest}，${finalActivity}${npcText}。`;
+        if (stContext) {
+            stContext.executeSlashCommandsWithOptions(`/setinput ${text}`);
+            window.CTEIdolManager.closeAllPopups();
+        }
+    };
+
+
     window.CTEIdolManager.openTravelMenu = function(destination) {
         window.CTEIdolManager.currentDestination = destination;
         window.CTEIdolManager.tempNPCState = { enabled: false, content: '' };
@@ -1979,7 +2111,6 @@
         }
     };
 
-
     function bindMapEvents() {
         const mapContainer = document.getElementById('cte-idol-map-container');
         if (!mapContainer) return;
@@ -2051,7 +2182,6 @@
     };
 
     window.CTEIdolManager.showPopup = function(id) {
-        if (id === 'cte-idol-dorm-detail-popup') window.CTEIdolManager.closeAllPopups();
         const popup = document.querySelector(`#cte-idol-map-panel #${id}`);
         const overlay = document.querySelector(`#cte-idol-map-panel #cte-idol-overlay`);
         if (popup) {
