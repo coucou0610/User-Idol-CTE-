@@ -27,7 +27,13 @@
 
     window.CTEIdolManager.availableParticipants = ['{{user}}', '秦述', '司洛', '鹿言', '魏星泽', '周锦宁', '谌绪', '孟明赫', '亓谢', '魏月华', '桑洛凡'];
 
-    window.CTEIdolManager.nationalCities = [
+    window.CTEIdolManager.npcDefaults = {
+        '机场': '粉丝、工作人员、其他团队成员',
+        '京港电视台': '粉丝、工作人员、其他团队成员',
+        '私人会所': '社交名流'
+    };
+
+        window.CTEIdolManager.nationalCities = [
         { id: 'jinggang', name: '京港', icon: 'fa-landmark-dome', top: '20%', left: '70%', isReturn: true, info: '<strong><i class="fa-solid fa-crown"></i> 首都:</strong> 首都，政治经济文化中心，权贵聚集，国际化大都市，夜生活极度繁华。' },
         { id: 'langjing', name: '琅京', icon: 'fa-gem', top: '40%', left: '80%', info: '<strong><i class="fa-solid fa-coins"></i> 豪门金库:</strong> 全国第二大城市，金融与地产重镇，豪门世家聚集。' },
         { id: 'shenzhou', name: '深州', icon: 'fa-microchip', top: '80%', left: '75%', info: '<strong><i class="fa-solid fa-chart-line"></i> 科技前沿:</strong> 沿海经济特区，科技与贸易发达，外企众多。' },
