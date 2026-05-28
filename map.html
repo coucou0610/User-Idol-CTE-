@@ -1808,50 +1808,6 @@
         window.CTEIdolManager.switchView('map');
     };
 
-    window.CTEIdolManager.openTravelMenu = function(destination) {
-        window.CTEIdolManager.currentDestination = destination;
-        window.CTEIdolManager.tempNPCState = { enabled: false, content: '' };
-        const defaultNPC = window.CTEIdolManager.npcDefaults[destination] || '';
-        const box = $('#cte-idol-travel-menu-overlay');
-
-        if (window.CTEIdolManager.isSelectingForSchedule) {
-            box.find('.cte-idol-travel-options').html(`
-                <div style="text-align:center; color:#e0c5a1; margin-bottom:15px; font-size:14px; border-bottom:1px solid #444; padding-bottom:10px;">
-                    正在执行行程：<br><span style="color:#b38b59; font-weight:bold;">${window.CTEIdolManager.currentScheduleItem}</span>
-                </div>
-                <div style="margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px;">
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-                        <span style="color:#aaa; font-size:13px;">是否遇见NPC？</span>
-                        <div>
-                            <button id="cte-idol-btn-npc-yes" class="cte-idol-btn" style="font-size:12px; padding:2px 8px; margin-right:5px; border-color:#666;" onclick="window.CTEIdolManager.toggleNPC(true, '${defaultNPC}')">是</button>
-                            <button id="cte-idol-btn-npc-no" class="cte-idol-btn" style="font-size:12px; padding:2px 8px; background:#b38b59; color:#1a1a1a;" onclick="window.CTEIdolManager.toggleNPC(false)">否</button>
-                        </div>
-                    </div>
-                    <input type="text" id="cte-idol-npc-input" class="cte-idol-travel-input" style="display:none; font-size:13px; margin-bottom:0;" placeholder="请输入遇见的人 (例如: 粉丝)" value="${defaultNPC}">
-                </div>
-                <button class="cte-idol-btn" onclick="window.CTEIdolManager.finalizeScheduleExecution()" style="background:#b38b59; color:#1a1a1a; font-weight:bold;">✅ 确认执行</button>
-                <button class="cte-idol-btn" style="margin-top: 10px; border-color: #666; color: #888;" onclick="window.CTEIdolManager.closeTravelMenu()">取消</button>
-            `);
-        } else {
-            box.find('.cte-idol-travel-options').html(`
-                <div style="margin-bottom: 15px; border-bottom: 1px solid #444; padding-bottom: 10px;">
-                    <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:8px;">
-                        <span style="color:#aaa; font-size:13px;">是否遇见NPC？</span>
-                        <div>
-                            <button id="cte-idol-btn-npc-yes" class="cte-idol-btn" style="font-size:12px; padding:2px 8px; margin-right:5px; border-color:#666;" onclick="window.CTEIdolManager.toggleNPC(true, '${defaultNPC}')">是</button>
-                            <button id="cte-idol-btn-npc-no" class="cte-idol-btn" style="font-size:12px; padding:2px 8px; background:#b38b59; color:#1a1a1a;" onclick="window.CTEIdolManager.toggleNPC(false)">否</button>
-                        </div>
-                    </div>
-                    <input type="text" id="cte-idol-npc-input" class="cte-idol-travel-input" style="display:none; font-size:13px; margin-bottom:0;" placeholder="请输入遇见的人 (例如: 粉丝)" value="${defaultNPC}">
-                </div>
-                <button class="cte-idol-btn" onclick="window.CTEIdolManager.confirmTravel(true)">👤 独自前往</button>
-                <button class="cte-idol-btn" onclick="window.CTEIdolManager.prepareCompanionInput()">👥 和……一起前往</button>
-                <button class="cte-idol-btn" style="margin-top: 10px; border-color: #666; color: #888;" onclick="window.CTEIdolManager.closeTravelMenu()">关闭</button>
-            `);
-        }
-        box.css('display', 'flex');
-        $('#cte-idol-travel-title').text(`前往 ${destination}`);
-    };
 
     window.CTEIdolManager.finalizeScheduleExecution = function() {
         const participants = window.CTEIdolManager.tempScheduleParticipants.join(', ');
