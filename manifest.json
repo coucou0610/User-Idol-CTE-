@@ -1,0 +1,9 @@
+{
+    "display_name": "User-Idol-CTE-",
+    "author": "coucou0610",
+    "version": "1.0.0",
+    "description": "地图与事务所管理系统",
+    "js": "index.js",
+    "css": "style.css",
+    "html": "map.html"
+}
