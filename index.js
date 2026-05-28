@@ -1979,117 +1979,6 @@
         }
     };
 
-    window.CTEIdolManager.openSubMenu = function(title, items) {
-        const overlay = document.getElementById('cte-idol-interior-sub-menu');
-        const titleEl = document.getElementById('cte-idol-sub-menu-title');
-        const contentEl = document.getElementById('cte-idol-sub-menu-content');
-        titleEl.textContent = title;
-        contentEl.innerHTML = '';
-        items.forEach(item => {
-            const btn = document.createElement('button');
-            btn.className = 'cte-idol-sub-item-btn';
-            btn.textContent = item;
-            btn.onclick = () => window.CTEIdolManager.openThirdLevelMenu(item, title, items);
-            contentEl.appendChild(btn);
-        });
-        overlay.style.display = 'flex';
-    };
-
-    window.CTEIdolManager.closeSubMenu = function() { $('#cte-idol-interior-sub-menu').hide(); };
-
-    window.CTEIdolManager.openThirdLevelMenu = function(roomName, floorTitle, floorItems) {
-        const titleEl = document.getElementById('cte-idol-sub-menu-title');
-        const contentEl = document.getElementById('cte-idol-sub-menu-content');
-        titleEl.textContent = roomName;
-        const desc = window.CTEIdolManager.roomDetails[roomName] || "暂无详细介绍。";
-        const profile = window.CTEIdolManager.characterProfiles[roomName];
-        let contentHTML = '';
-        
-        if (profile) {
-            if (roomName === '你') {
-                const savedAvatar = localStorage.getItem('cte_idol_user_avatar');
-                const avatarSrc = savedAvatar || '';
-                const hasAvatar = avatarSrc !== '';
-                
-                contentHTML = `
-                    <div class="cte-idol-character-room-detail">
-                        <div class="cte-idol-character-portrait cte-idol-user-portrait ${hasAvatar ? '' : 'no-avatar'}">
-                            ${hasAvatar 
-                                ? `<img src="${avatarSrc}" alt="你" class="cte-idol-character-image" id="cte-idol-user-avatar-img">` 
-                                : `<div class="cte-idol-avatar-placeholder" id="cte-idol-user-avatar-placeholder"><span class="cte-idol-placeholder-icon">👤</span><span class="cte-idol-placeholder-text">点击上传头像</span></div>`
-                            }
-                        </div>
-                        <div class="cte-idol-avatar-upload-section">
-                            <button class="cte-idol-btn cte-idol-avatar-upload-btn" onclick="document.getElementById('cte-idol-user-avatar-upload').click()">📷 ${hasAvatar ? '更换头像' : '上传头像'}</button>
-                            <input type="file" id="cte-idol-user-avatar-upload" accept="image/*" style="display:none;" onchange="window.CTEIdolManager.uploadUserAvatar(this)">
-                            ${hasAvatar ? `<button class="cte-idol-btn cte-idol-avatar-delete-btn" onclick="window.CTEIdolManager.deleteUserAvatar()">🗑️ 删除头像</button>` : ''}
-                        </div>
-                        <div class="cte-idol-character-info">
-                            <div class="cte-idol-info-row"><span class="cte-idol-info-label">姓名</span><span class="cte-idol-info-value">你</span></div>
-                            <div class="cte-idol-info-row"><span class="cte-idol-info-label">年龄</span><span class="cte-idol-info-value">${profile.age}</span></div>
-                            <div class="cte-idol-info-row"><span class="cte-idol-info-label">身份</span><span class="cte-idol-info-value">${profile.role}</span></div>
-                            <div class="cte-idol-info-row"><span class="cte-idol-info-label">性格</span><span class="cte-idol-info-value">${profile.personality}</span></div>
-                        </div>
-                        <div class="cte-idol-room-description"><p>${desc}</p></div>
-                        <div class="cte-idol-action-buttons"><button class="cte-idol-btn" onclick="window.CTEIdolManager.openTravelMenu('你的房间')">🚀 前往</button><button class="cte-idol-sub-item-btn" id="cte-idol-temp-back-btn">[ < 返回上一级 ]</button></div>
-                    </div>`;
-            } else {
-                contentHTML = `
-                    <div class="cte-idol-character-room-detail">
-                        <div class="cte-idol-character-portrait"><img src="${profile.image}" alt="${roomName}" class="cte-idol-character-image"></div>
-                        <div class="cte-idol-character-info">
-                            <div class="cte-idol-info-row"><span class="cte-idol-info-label">姓名</span><span class="cte-idol-info-value">${roomName}</span></div>
-                            <div class="cte-idol-info-row"><span class="cte-idol-info-label">年龄</span><span class="cte-idol-info-value">${profile.age}岁</span></div>
-                            <div class="cte-idol-info-row"><span class="cte-idol-info-label">身份</span><span class="cte-idol-info-value">${profile.role}</span></div>
-                            <div class="cte-idol-info-row"><span class="cte-idol-info-label">性格</span><span class="cte-idol-info-value">${profile.personality}</span></div>
-                        </div>
-                        <div class="cte-idol-room-description"><p>${desc}</p></div>
-                        <div class="cte-idol-action-buttons"><button class="cte-idol-btn" onclick="window.CTEIdolManager.openTravelMenu('${roomName}的房间')">🚀 前往</button><button class="cte-idol-sub-item-btn" id="cte-idol-temp-back-btn">[ < 返回上一级 ]</button></div>
-                    </div>`;
-            }
-        } else {
-            contentHTML = `
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
-                    <p style="text-align:justify; font-size:14px; line-height:1.6;">${desc}</p>
-                    <button class="cte-idol-btn" onclick="window.CTEIdolManager.openTravelMenu('${roomName}')">🚀 前往</button>
-                    <button class="cte-idol-sub-item-btn" id="cte-idol-temp-back-btn">[ < 返回上一级 ]</button>
-                </div>`;
-        }
-        contentEl.innerHTML = contentHTML;
-        document.getElementById('cte-idol-temp-back-btn').onclick = () => window.CTEIdolManager.openSubMenu(floorTitle, floorItems);
-    };
-
-    window.CTEIdolManager.uploadUserAvatar = function(input) {
-        if (input.files && input.files[0]) {
-            const file = input.files[0];
-            if (file.size > 2 * 1024 * 1024) { alert('图片大小不能超过2MB，请选择较小的图片'); return; }
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                localStorage.setItem('cte_idol_user_avatar', e.target.result);
-                window.CTEIdolManager.openThirdLevelMenu('你', '五楼：私人宿舍区', ['秦述', '司洛', '鹿言', '魏星泽', '周锦宁', '谌绪', '孟明赫', '亓谢', '魏月华', '桑洛凡', '你', '公共书房/阅览区']);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-
-    window.CTEIdolManager.deleteUserAvatar = function() {
-        if (confirm('确定要删除头像吗？')) {
-            localStorage.removeItem('cte_idol_user_avatar');
-            window.CTEIdolManager.openThirdLevelMenu('你', '五楼：私人宿舍区', ['秦述', '司洛', '鹿言', '魏星泽', '周锦宁', '谌绪', '孟明赫', '亓谢', '魏月华', '桑洛凡', '你', '公共书房/阅览区']);
-        }
-    };
-
-    window.CTEIdolManager.openRooftopMenu = function() {
-        window.CTEIdolManager.openSubMenu('天台花园酒吧', []);
-        const contentEl = document.getElementById('cte-idol-sub-menu-content');
-        contentEl.innerHTML = `
-            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
-                <p style="text-align:justify; font-size:14px; line-height:1.6;">
-                    种植着四季花草，设有舒适的露天沙发、吧台和烧烤架，可以远眺京港的夜景，是成员们聚会放松的绝佳地点。
-                </p>
-                <button class="cte-idol-btn" onclick="window.CTEIdolManager.openTravelMenu('天台花园酒吧')">🚀 前往</button>
-            </div>`;
-    };
 
     function bindMapEvents() {
         const mapContainer = document.getElementById('cte-idol-map-container');
@@ -2176,7 +2065,6 @@
         const isTravelMenuVisible = $('#cte-idol-travel-menu-overlay').is(':visible');
         $('#cte-idol-map-panel #cte-idol-overlay').hide();
         $('#cte-idol-map-panel .cte-idol-popup').hide();
-        window.CTEIdolManager.closeSubMenu();
         // [FIX] Update close logic to new consolidated object methods
         window.CTEIdolManager.Contracts.closeModal();
         window.CTEIdolManager.Shop.closeModal();
